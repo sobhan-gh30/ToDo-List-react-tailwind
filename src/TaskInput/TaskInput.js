@@ -3,17 +3,33 @@ import { FaPlus } from "react-icons/fa";
 import {useState} from "react";
 import Categories from "../categories/catagories";
 import TaskShow from "../taskShow/taskShow";
+
+let nextId = 0;
+
 export default function TaskInput(){
     let [taskInputValue , setTaskInputValue] = useState("")
+    let [todo, setTodo] = useState([]);
+
+    function setNewTodo(){
+        if (taskInputValue.trim() !== "") {
+            setTodo([...todo, { id: nextId++, todo: taskInputValue }]);
+            setTaskInputValue("");
+        } else {
+            alert("Please enter a task");
+        }
+    }
+
+
     return (
         <div className="w-[30rem]">
             <div className="flex justify-between items-center">
 
             <div className="border w-80 h-14 bg-white p-2 flex justify-between items-center">
-                <input onChange={(event) => {
+                <input id="todo_input" value={taskInputValue} onChange={(event) => {
                     setTaskInputValue(event.target.value)
                 }} type="text" className="h-full w-5/6 outline-0 text-xl"/>
                 <div
+                    onClick={setNewTodo}
                     className="w-10 h-10 rounded-full flex justify-center items-center bg-white shadow-md hover:shadow-inner cursor-pointer border border-zinc-100">
                     <FaPlus className="scale-150"/>
                 </div>
@@ -22,8 +38,17 @@ export default function TaskInput(){
             </div>
             <div className="w-full h-12 py-16">
                 <h1 className="text-center text-3xl font-bold drop-shadow-lg text-white mb-10">To Do ✌️</h1>
-                <TaskShow />
-                <TaskShow />
+                <div className="mt-4">
+                    {todo.length > 0 ? (
+                        <ul>
+                            {todo.map((item) => (
+                                <TaskShow {...item}/>
+                            ))}
+                        </ul>
+                    ) : (
+                        <p className="text-center text-gray-200">No tasks yet!</p>
+                    )}
+                </div>
             </div>
         </div>
     )
